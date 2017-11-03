@@ -105,12 +105,14 @@ class Board {
             guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
             camel.location = camel.location + die.value
             if camel.location > 15 {
-                print("game over, \(camel.color.rawValue) wins, leg count: \(legCount)")
                 gameIsOver = true
                 break
             }
         }
         print("leg over, \( camels.sorted(by: { $0.location > $1.location }).first?.color.rawValue ?? "don't know" ) wins leg")
+        if gameIsOver {
+            print("game over, leg count: \(legCount)")
+        }
         dicePyramid.resetDice()
     }
     
