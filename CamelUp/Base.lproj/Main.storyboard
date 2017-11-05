@@ -90,7 +90,7 @@ line6</string>
                                 </connections>
                             </segmentedControl>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="line 1" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Heg-hv-MOr">
-                                <rect key="frame" x="20" y="94" width="424" height="29"/>
+                                <rect key="frame" x="20" y="94" width="424" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="textColor"/>
@@ -103,6 +103,13 @@ line6</string>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rio-Jf-ZZT">
+                                <rect key="frame" x="20" y="123" width="424" height="182"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -114,6 +121,7 @@ line6</string>
                         <outlet property="infoLabel3" destination="Heg-hv-MOr" id="VDg-9k-pKB"/>
                         <outlet property="legButton" destination="efd-Oi-L7J" id="yLV-yu-0DT"/>
                         <outlet property="raceButton" destination="jAJ-RK-jkX" id="EyY-57-01Q"/>
+                        <outlet property="resultsTextView" destination="rio-Jf-ZZT" id="gwy-NX-jcA"/>
                         <outlet property="simulationCountControl" destination="8gw-qy-kPK" id="4lX-4m-9e5"/>
                     </connections>
                 </viewController>

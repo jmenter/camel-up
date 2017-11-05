@@ -27,6 +27,43 @@ class Board: NSCopying {
         dicePyramid.reset()
     }
     
+    func doCamel() -> String {
+        if dicePyramid.dice.count == 0 {
+            legCount += 1
+            dicePyramid.reset()
+        }
+        guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return "" }
+        
+        let postfix = modifierAt(location: camel.location + die.value) == 0 ? "\n" : " and hit desert tile at \(camel.location + die.value + 1)\n"
+        var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
+        newLocation = newLocation > 16 ? 16 : newLocation
+        move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
+        if camel.location > 15 { gameIsOver = true }
+        if dicePyramid.dice.count == 0 {
+            legCount += 1
+            dicePyramid.reset()
+        }
+        return "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+    }
+    
+    func doLeg() -> String {
+        var results = ""
+        while dicePyramid.dice.count > 0 {
+            guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
+            
+            let postfix = modifierAt(location: camel.location + die.value) == 0 ? "\n" : " and hit desert tile at \(camel.location + die.value + 1)\n"
+            var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
+            newLocation = newLocation > 16 ? 16 : newLocation
+            move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
+            results +=  "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+            if camel.location > 15 { gameIsOver = true; break }
+        }
+        
+        legCount += 1
+        dicePyramid.reset()
+        return results
+    }
+    
     func move(camel: Camel, fromLocation: Int, toLocation: Int) {
         guard fromLocation != toLocation else { return }
         
@@ -34,46 +71,20 @@ class Board: NSCopying {
         
         var camelStack = [camel]
         var testCamel:Camel? = camel
-
+        
         while testCamel?.camelUpColor != nil {
             testCamel = camels.filter({ $0.color == testCamel?.camelUpColor }).first
             camelStack.append(testCamel!)
         }
-
+        
         if let topDestinationCamel = camels.filter({$0.location == toLocation && $0.camelUpColor == nil}).first {
             topDestinationCamel.camelUpColor = camel.color
         }
-
+        
         camelStack.forEach({$0.location = toLocation})
     }
     
-    func doCamel() {
-        if dicePyramid.dice.count == 0 {
-            legCount += 1
-            dicePyramid.reset()
-        }
-        guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return }
-        
-        var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-        newLocation = newLocation > 16 ? 16 : newLocation
-        move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-        if camel.location > 15 { gameIsOver = true }
-    }
-    
-    func doLeg() {
-        while dicePyramid.dice.count > 0 {
-            guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
-            
-            var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-            newLocation = newLocation > 16 ? 16 : newLocation
-            move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-            if camel.location > 15 { gameIsOver = true; break }
-        }
-        
-        legCount += 1
-        dicePyramid.reset()
-    }
-    
+
     func modifierAt(location: Int) -> Int {
         return location >= boardCells.count ? 0 : boardCells[location].desertTile?.rawValue ?? 0
     }

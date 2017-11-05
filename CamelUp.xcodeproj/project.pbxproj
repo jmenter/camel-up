@@ -19,6 +19,7 @@
 		63A333A11FAE4538000335BC /* Die.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A01FAE4538000335BC /* Die.swift */; };
 		63A333A31FAE4551000335BC /* DicePyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A21FAE4551000335BC /* DicePyramid.swift */; };
 		63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A41FAE45AA000335BC /* BoardCell.swift */; };
+		63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		63A333A01FAE4538000335BC /* Die.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Die.swift; sourceTree = "<group>"; };
 		63A333A21FAE4551000335BC /* DicePyramid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DicePyramid.swift; sourceTree = "<group>"; };
 		63A333A41FAE45AA000335BC /* BoardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCell.swift; sourceTree = "<group>"; };
+		63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 			isa = PBXGroup;
 			children = (
 				638E221D1FAE085000A501B3 /* AppDelegate.swift */,
+				63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */,
 				638E221F1FAE085000A501B3 /* ViewController.swift */,
 				63A3339A1FAE44DF000335BC /* Color.swift */,
 				63A3339C1FAE4500000335BC /* Camel.swift */,
@@ -162,6 +165,7 @@
 				63A333A11FAE4538000335BC /* Die.swift in Sources */,
 				63A3339B1FAE44DF000335BC /* Color.swift in Sources */,
 				63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */,
+				63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */,
 				638E221E1FAE085000A501B3 /* AppDelegate.swift in Sources */,
 				63A3339F1FAE4521000335BC /* DesertTile.swift in Sources */,
 				638E22301FAE085C00A501B3 /* Board.swift in Sources */,
