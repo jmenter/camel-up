@@ -40,25 +40,26 @@ class ViewController: UIViewController {
     
     @IBAction func camelWasTapped(_ sender: Any) {
         resultsTextView.text = resultsTextView.text + board.doCamel()
-        configureCamels()
-        if board.dicePyramid.dice.count == 5 {
-            resultsTextView.text = resultsTextView.text + "\(board.currentWinner()) wins leg"
+        if board.gameIsOver {
+            resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
         }
-    }
+        configureCamels()
+   }
     
     @IBAction func legWasTapped(_ sender: Any) {
         resultsTextView.text = resultsTextView.text + board.doLeg()
+        if board.gameIsOver {
+            resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
+        }
         configureCamels()
-        resultsTextView.text = resultsTextView.text + "\(board.currentWinner()) wins leg"
     }
     
     @IBAction func raceWasTapped(_ sender: Any) {
         while !board.gameIsOver {
             resultsTextView.text = resultsTextView.text + board.doLeg()
-            resultsTextView.text = resultsTextView.text + "\(board.currentWinner()) wins leg"
         }
+        resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
         configureCamels()
-        resultsTextView.text = resultsTextView.text + "\(board.currentWinner()) wins race"
     }
     
     override func viewDidLoad() {
@@ -84,7 +85,6 @@ class ViewController: UIViewController {
             $0.textAlignment = .center
             self.view.addSubview($0)
         })
-        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(viewWasTapped(gr:))))
     }
     
@@ -110,13 +110,6 @@ class ViewController: UIViewController {
                 } else {
                     boardCell.desertTile = .plus
                 }
-                //                if modifier < camelHeight / 3 {
-                //                    boardCell.desertTile = .plus
-                //                } else if modifier < (camelHeight / 3) * 2 {
-                //                    boardCell.desertTile = nil
-                //                } else {
-                //                    boardCell.desertTile = .minus
-                //                }
                 configureCamels()
             }
         }

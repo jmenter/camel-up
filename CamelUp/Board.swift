@@ -39,11 +39,13 @@ class Board: NSCopying {
         newLocation = newLocation > 16 ? 16 : newLocation
         move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
         if camel.location > 15 { gameIsOver = true }
-        if dicePyramid.dice.count == 0 {
+        var winner = ""
+        if dicePyramid.dice.count == 0 || gameIsOver {
             legCount += 1
             dicePyramid.reset()
+            winner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
         }
-        return "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+        return "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + winner
     }
     
     func doLeg() -> String {
@@ -58,7 +60,8 @@ class Board: NSCopying {
             results +=  "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
             if camel.location > 15 { gameIsOver = true; break }
         }
-        
+        results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
+
         legCount += 1
         dicePyramid.reset()
         return results
