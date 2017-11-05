@@ -10,18 +10,6 @@ class Board: NSCopying {
     var gameIsOver = false
     var legCount = 0
     
-    func copy(with zone: NSZone? = nil) -> Any {
-        let newCopy = Board()
-        
-        newCopy.boardCells = boardCells.map({ $0.copy() as! BoardCell })
-        newCopy.camels = camels.map({ $0.copy() as! Camel })
-        newCopy.dicePyramid = dicePyramid.copy() as! DicePyramid
-        newCopy.legCount = legCount
-        newCopy.gameIsOver = gameIsOver
-        
-        return newCopy
-    }
-    
     init() {
         reset()
     }
@@ -40,79 +28,54 @@ class Board: NSCopying {
     }
     
     func move(camel: Camel, fromLocation: Int, toLocation: Int) {
-        guard fromLocation != toLocation else {
-//            print("from and to are same, exiting")
-            return
-        }
+        guard fromLocation != toLocation else { return }
         
-//        print("\nmoving camel \(camel.color) from: \(fromLocation) to: \(toLocation)")
-        // if camel below from, disattach
-        camels.filter({ $0.camelUpColor == camel.color }).forEach({
-            $0.camelUpColor = nil
-//            print("disattaching from \($0.color) at \($0.location)")
-        })
+        camels.filter({ $0.camelUpColor == camel.color }).forEach({ $0.camelUpColor = nil })
         
-        // create stack of camels to move
         var camelStack = [camel]
-        
-        var currentCamel:Camel? = camel
+        var testCamel:Camel? = camel
 
-        while currentCamel?.camelUpColor != nil {
-            currentCamel = camels.filter({ $0.color == currentCamel?.camelUpColor}).first
-            camelStack.append(currentCamel!)
-        }
-//        print("camelStack pre move: \(camelStack.debugDescription)")
-        // if camel below at destination, attach
-        if let preexistingCamel = camels.filter({$0.location == toLocation && $0.camelUpColor == nil}).first {
-//            print("adding to top of \(preexistingCamel.color) at location: \(preexistingCamel.location)")
-            preexistingCamel.camelUpColor = camel.color
+        while testCamel?.camelUpColor != nil {
+            testCamel = camels.filter({ $0.color == testCamel?.camelUpColor }).first
+            camelStack.append(testCamel!)
         }
 
-        // change location of all camels in the stack
+        if let topDestinationCamel = camels.filter({$0.location == toLocation && $0.camelUpColor == nil}).first {
+            topDestinationCamel.camelUpColor = camel.color
+        }
+
         camelStack.forEach({$0.location = toLocation})
-//        print("camelStack post move: \(camelStack.debugDescription)")
-    }
-    
-    func modifierAt(location: Int) -> Int {
-        guard location < boardCells.count else { return 0 }
-        return boardCells[location].desertTile?.rawValue ?? 0
     }
     
     func doCamel() {
-        if dicePyramid.dice.count == 0 { dicePyramid.reset() }
-        
+        if dicePyramid.dice.count == 0 {
+            legCount += 1
+            dicePyramid.reset()
+        }
         guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return }
         
-        let newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-        
+        var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
+        newLocation = newLocation > 16 ? 16 : newLocation
         move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-        
-        if camel.location > 15 {
-            gameIsOver = true
-        }
+        if camel.location > 15 { gameIsOver = true }
     }
     
     func doLeg() {
-        legCount += 1
         while dicePyramid.dice.count > 0 {
             guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
             
-            let newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-
+            var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
+            newLocation = newLocation > 16 ? 16 : newLocation
             move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-
-            if camel.location > 15 {
-                gameIsOver = true
-                break
-            }
+            if camel.location > 15 { gameIsOver = true; break }
         }
         
-        if gameIsOver {
-//            print("game over, \(currentWinner().color.rawValue) wins, leg count: \(legCount)\n")
-        } else {
-//            print("leg over, \(currentWinner().color.rawValue) wins leg\n")
-        }
+        legCount += 1
         dicePyramid.reset()
+    }
+    
+    func modifierAt(location: Int) -> Int {
+        return location >= boardCells.count ? 0 : boardCells[location].desertTile?.rawValue ?? 0
     }
     
     func camelsBelow(camel: Camel) -> Int {
@@ -132,11 +95,17 @@ class Board: NSCopying {
         return furthestCamels.filter({$0.camelUpColor == nil}).first!
     }
     
-    func camelConfiguration() -> String {
-        var base = ""
-        camels.forEach { camel in
-            base = base + camel.debugDescription + "\n"
-        }
-        return base
+    func copy(with zone: NSZone? = nil) -> Any {
+        let newCopy = Board()
+        
+        newCopy.boardCells = boardCells.map({ $0.copy() as! BoardCell })
+        newCopy.camels = camels.map({ $0.copy() as! Camel })
+        newCopy.dicePyramid = dicePyramid.copy() as! DicePyramid
+        newCopy.legCount = legCount
+        newCopy.gameIsOver = gameIsOver
+        
+        return newCopy
     }
+    
+
 }
