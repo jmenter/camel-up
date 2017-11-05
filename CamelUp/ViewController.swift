@@ -65,6 +65,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        resultsTextView.layoutManager.allowsNonContiguousLayout = false
         view.subviews.flatMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
         
         blueCamel.tintColor = UIColor.blue
@@ -163,6 +164,7 @@ class ViewController: UIViewController {
         } else {
             infoLabel3.text = "dice remaining: " + board.dicePyramid.dice.flatMap({ $0.color.rawValue + " " })
         }
+        resultsTextView.scrollRangeToVisible(NSMakeRange(resultsTextView.text.count, 0))
     }
     
     private func simulationCount() -> Int {
