@@ -1,11 +1,6 @@
 
 import UIKit
 
-enum SimulationType: String {
-    case leg = "leg"
-    case race = "race"
-}
-
 class ViewController: UIViewController {
     
     @IBOutlet weak var infoLabel: UILabel!
@@ -48,27 +43,27 @@ class ViewController: UIViewController {
         applyBoardState()
     }
     
-    @IBAction func simulationCountControlWasTapped(_ sender: Any) {
+    @IBAction func simulationCountControlWasTapped(_ sender: UISegmentedControl) {
         applyBoardState()
     }
     
-    @IBAction func resetWasTapped(_ sender: Any) {
+    @IBAction func resetWasTapped(_ sender: UIButton) {
         resultsTextView.text = ""
         board.reset()
         applyBoardState()
     }
     
-    @IBAction func camelWasTapped(_ sender: Any) {
+    @IBAction func camelWasTapped(_ sender: UIButton) {
         resultsTextView.text = resultsTextView.text + board.doCamel()
         applyBoardState()
     }
     
-    @IBAction func legWasTapped(_ sender: Any) {
+    @IBAction func legWasTapped(_ sender: UIButton) {
         resultsTextView.text = resultsTextView.text + board.doLeg()
         applyBoardState()
     }
     
-    @IBAction func raceWasTapped(_ sender: Any) {
+    @IBAction func raceWasTapped(_ sender: UIButton) {
         resultsTextView.text = resultsTextView.text + board.doRace()
         applyBoardState()
     }
@@ -102,37 +97,40 @@ class ViewController: UIViewController {
         resultsTextView.scrollRangeToVisible(NSMakeRange(resultsTextView.text.count, 0))
     }
     
-    fileprivate func layoutBoardLabels() {
-        boardLabels.forEach { label in
-            let xPosition: CGFloat = (CGFloat(label.tag) * cellWidth) + margin
-            let yPosition: CGFloat = self.view.frame.height - camelHeight - margin
-            label.frame = CGRect(x: xPosition, y: yPosition, width: cellWidth, height: camelHeight)
-        }
-    }
-    
     fileprivate func layoutCamels() {
         board.camels.forEach({camel in
-            let xPosition: CGFloat = (CGFloat(camel.location) * cellWidth) + margin
-            let camelsBelow: CGFloat = CGFloat(self.board.camelsBelow(camel: camel))
-            let yPosition: CGFloat = self.view.frame.height - margin - camelHeight - (camelsBelow * (camelHeight * 0.70))
+            let camelOffset = CGFloat(self.board.camelsBelow(camel: camel)) * camelHeight * 0.70
             UIView.animate(withDuration: 0.25, animations: {
-                camel.imageView?.frame = CGRect(x: xPosition, y: yPosition, width: self.cellWidth, height: self.camelHeight)
+                camel.imageView?.frame = CGRect(x: (CGFloat(camel.location) * self.cellWidth) + self.margin,
+                                                y: self.view.frame.height - self.margin - self.camelHeight - camelOffset,
+                                                width: self.cellWidth,
+                                                height: self.camelHeight)
             })
         })
+    }
+    
+    fileprivate func layoutBoardLabels() {
+        boardLabels.forEach { label in
+            label.frame = CGRect(x: (CGFloat(label.tag) * cellWidth) + margin,
+                                 y: self.view.frame.height - camelHeight - margin,
+                                 width: cellWidth,
+                                 height: camelHeight)
+        }
     }
     
     fileprivate func populateBoardLabels() {
         boardLabels.forEach { label in
             label.text = "\(label.tag + 1)"
-            label.backgroundColor = UIColor.clear
+            label.backgroundColor = self.board.boardCells[label.tag].desertTile?.color ?? UIColor.clear
+            
             guard let desertTile = self.board.boardCells[label.tag].desertTile else { return }
+            
             switch desertTile {
             case .plus:
                 label.text = "\(desertTile.description)\n\(label.tag + 1)\n"
             case .minus:
                 label.text = "\n\(label.tag + 1)\n\(desertTile.description)"
             }
-            label.backgroundColor = desertTile.color
         }
     }
     

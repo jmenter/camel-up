@@ -20,6 +20,7 @@
 		63A333A31FAE4551000335BC /* DicePyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A21FAE4551000335BC /* DicePyramid.swift */; };
 		63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A41FAE45AA000335BC /* BoardCell.swift */; };
 		63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */; };
+		63DCE6C61FB013EC009B70F3 /* SimulationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCE6C51FB013EC009B70F3 /* SimulationType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		63A333A21FAE4551000335BC /* DicePyramid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DicePyramid.swift; sourceTree = "<group>"; };
 		63A333A41FAE45AA000335BC /* BoardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCell.swift; sourceTree = "<group>"; };
 		63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		63DCE6C51FB013EC009B70F3 /* SimulationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 			children = (
 				638E221F1FAE085000A501B3 /* ViewController.swift */,
 				638E222F1FAE085B00A501B3 /* Board.swift */,
+				63DCE6C51FB013EC009B70F3 /* SimulationType.swift */,
 				63DCE6C31FB00E37009B70F3 /* Board Parts */,
 				63DCE6C41FB00E51009B70F3 /* Etc */,
 				638E22211FAE085000A501B3 /* Main.storyboard */,
@@ -184,6 +187,7 @@
 				63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */,
 				638E221E1FAE085000A501B3 /* AppDelegate.swift in Sources */,
 				63A3339F1FAE4521000335BC /* DesertTile.swift in Sources */,
+				63DCE6C61FB013EC009B70F3 /* SimulationType.swift in Sources */,
 				638E22301FAE085C00A501B3 /* Board.swift in Sources */,
 				63A333A31FAE4551000335BC /* DicePyramid.swift in Sources */,
 			);
