@@ -1,15 +1,14 @@
 
 import Foundation
 
-class Board: NSCopying {
+class Board {
 
     static let numberOfCells = 16
     var boardCells:[BoardCell] = (0..<Board.numberOfCells).map { _ in BoardCell() }
     var dicePyramid = DicePyramid()
-    var camels = [Camel(color: .blue), Camel(color: .green), Camel(color: .orange), Camel(color: .yellow), Camel(color: .white)]
+    var camels = Color.allColors.map({ Camel(color: $0) })
     
     var gameIsOver = false
-    var legCount = 0
     
     init() {
         reset()
@@ -29,10 +28,8 @@ class Board: NSCopying {
     }
     
     func doCamel() -> String {
-        if dicePyramid.dice.count == 0 {
-            legCount += 1
-            dicePyramid.reset()
-        }
+        if dicePyramid.dice.count == 0 { dicePyramid.reset() }
+        
         guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return "" }
         
         let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
@@ -42,13 +39,12 @@ class Board: NSCopying {
         newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
         move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
         if camel.location >= Board.numberOfCells { gameIsOver = true }
-        var winner = ""
+        var legWinner = ""
         if dicePyramid.dice.count == 0 || gameIsOver {
-            legCount += 1
             dicePyramid.reset()
-            winner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
+            legWinner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
         }
-        return "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + winner + (gameIsOver ? "\(currentWinner().color.rawValue) wins race" : "")
+        return "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + legWinner + (gameIsOver ? "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race" : "")
     }
     
     func doLeg() -> String {
@@ -62,14 +58,15 @@ class Board: NSCopying {
             var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
             newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
             move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-            results +=  "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+            results += "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
             if camel.location >= Board.numberOfCells { gameIsOver = true; break }
         }
-        results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
-
-        legCount += 1
         dicePyramid.reset()
-        return results + (gameIsOver ? "\(currentWinner().color.rawValue) wins race" : "")
+        results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
+        if gameIsOver {
+            results += "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race"
+        }
+        return results
     }
     
     func doRace() -> String {
@@ -100,7 +97,6 @@ class Board: NSCopying {
         camelStack.forEach({$0.location = toLocation})
     }
     
-
     func modifierAt(location: Int) -> Int {
         return location >= boardCells.count ? 0 : boardCells[location].desertTile?.rawValue ?? 0
     }
@@ -122,17 +118,26 @@ class Board: NSCopying {
         return furthestCamels.filter({$0.camelUpColor == nil}).first!
     }
     
-    func copy(with zone: NSZone? = nil) -> Any {
+    func currentLoser() -> Camel {
+        let nearestCamelLocation = camels.sorted(by: { $0.location < $1.location }).first?.location
+        let nearestCamels = camels.filter({$0.location == nearestCamelLocation})
+        var testCamel: Camel? = nearestCamels.filter({$0.camelUpColor == nil}).first!
+        
+        while camels.filter({$0.camelUpColor == testCamel?.color}).count > 0 {
+            testCamel = self.camels.filter({$0.camelUpColor == testCamel?.color}).first
+        }
+        return testCamel!
+    }
+    
+    func copy() -> Board {
         let newCopy = Board()
         
-        newCopy.boardCells = boardCells.map({ $0.copy() as! BoardCell })
-        newCopy.camels = camels.map({ $0.copy() as! Camel })
-        newCopy.dicePyramid = dicePyramid.copy() as! DicePyramid
-        newCopy.legCount = legCount
+        newCopy.boardCells = boardCells.map({ $0.copy() })
+        newCopy.camels = camels.map({ $0.copy() })
+        newCopy.dicePyramid = dicePyramid.copy()
         newCopy.gameIsOver = gameIsOver
         
         return newCopy
     }
-    
 
 }

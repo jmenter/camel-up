@@ -1,7 +1,7 @@
 
 import Foundation
 
-class Die: NSCopying {
+class Die {
     
     let color: Color
     var value:Int = 1
@@ -15,7 +15,7 @@ class Die: NSCopying {
         value = Int(arc4random_uniform(3)) + 1
     }
     
-    func copy(with zone: NSZone? = nil) -> Any {
+    func copy() -> Die {
         let newCopy = Die(color: color)
         newCopy.value = value
         return newCopy

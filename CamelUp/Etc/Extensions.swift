@@ -15,13 +15,7 @@ extension UILabel {
     }
 }
 
-extension UIColor {
-    class var darkYellow: UIColor { return UIColor(red: 0.9, green: 0.9, blue: 0.0, alpha: 1.0) }
-    class var darkWhite: UIColor { return UIColor(white: 0.9, alpha: 1.0) }
-}
-
 extension UIButton {
-    
     func makeButtonSane() {
         clipsToBounds = true
         layer.cornerRadius = 4
@@ -35,19 +29,7 @@ extension UIButton {
     }
 }
 
-extension UIImageView {
-    
-    class func camelImageView(tintColor: UIColor) -> UIImageView {
-        let imageView = UIImageView(image: UIImage(named: "camel"))
-        imageView.tintColor = tintColor
-        imageView.contentMode = .scaleAspectFill;
-        imageView.isUserInteractionEnabled = false
-        return imageView
-    }
-    
-}
 extension UIImage {
-    
     convenience init(color: UIColor) {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: 1, height: 1), false, 0)
         color.setFill()
@@ -62,10 +44,21 @@ extension UIImage {
     
 }
 
-extension UISegmentedControl {
-    
-    var titleForSelectedSegment: String? {
-        return titleForSegment(at: selectedSegmentIndex)
+extension UIImageView {
+    class func camelImageView(tintColor: UIColor) -> UIImageView {
+        let imageView = UIImageView(image: UIImage(named: "camel"))
+        imageView.tintColor = tintColor
+        imageView.contentMode = .scaleAspectFill;
+        imageView.isUserInteractionEnabled = false
+        return imageView
     }
-    
+}
+
+extension UIColor {
+    class var darkYellow: UIColor { return UIColor(red: 0.9, green: 0.9, blue: 0.0, alpha: 1.0) }
+    class var darkWhite: UIColor { return UIColor(white: 0.9, alpha: 1.0) }
+}
+
+extension UISegmentedControl {
+    var titleForSelectedSegment: String? { return titleForSegment(at: selectedSegmentIndex) }
 }

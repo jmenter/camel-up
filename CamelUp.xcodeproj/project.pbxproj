@@ -70,22 +70,38 @@
 		638E221C1FAE085000A501B3 /* CamelUp */ = {
 			isa = PBXGroup;
 			children = (
-				638E221D1FAE085000A501B3 /* AppDelegate.swift */,
-				63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */,
 				638E221F1FAE085000A501B3 /* ViewController.swift */,
-				63A3339A1FAE44DF000335BC /* Color.swift */,
-				63A3339C1FAE4500000335BC /* Camel.swift */,
-				63A333A01FAE4538000335BC /* Die.swift */,
-				63A333A21FAE4551000335BC /* DicePyramid.swift */,
-				63A333A41FAE45AA000335BC /* BoardCell.swift */,
-				63A3339E1FAE4521000335BC /* DesertTile.swift */,
 				638E222F1FAE085B00A501B3 /* Board.swift */,
+				63DCE6C31FB00E37009B70F3 /* Board Parts */,
+				63DCE6C41FB00E51009B70F3 /* Etc */,
 				638E22211FAE085000A501B3 /* Main.storyboard */,
 				638E22241FAE085000A501B3 /* Assets.xcassets */,
 				638E22261FAE085000A501B3 /* LaunchScreen.storyboard */,
 				638E22291FAE085000A501B3 /* Info.plist */,
 			);
 			path = CamelUp;
+			sourceTree = "<group>";
+		};
+		63DCE6C31FB00E37009B70F3 /* Board Parts */ = {
+			isa = PBXGroup;
+			children = (
+				63A3339C1FAE4500000335BC /* Camel.swift */,
+				63A333A01FAE4538000335BC /* Die.swift */,
+				63A333A21FAE4551000335BC /* DicePyramid.swift */,
+				63A333A41FAE45AA000335BC /* BoardCell.swift */,
+				63A3339A1FAE44DF000335BC /* Color.swift */,
+				63A3339E1FAE4521000335BC /* DesertTile.swift */,
+			);
+			path = "Board Parts";
+			sourceTree = "<group>";
+		};
+		63DCE6C41FB00E51009B70F3 /* Etc */ = {
+			isa = PBXGroup;
+			children = (
+				63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */,
+				638E221D1FAE085000A501B3 /* AppDelegate.swift */,
+			);
+			path = Etc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
