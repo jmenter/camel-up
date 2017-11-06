@@ -3,7 +3,8 @@ import Foundation
 
 class Board: NSCopying {
 
-    var boardCells:[BoardCell] = (0..<16).map { _ in BoardCell() }
+    static let numberOfCells = 16
+    var boardCells:[BoardCell] = (0..<Board.numberOfCells).map { _ in BoardCell() }
     var dicePyramid = DicePyramid()
     var camels = [Camel(color: .blue), Camel(color: .green), Camel(color: .orange), Camel(color: .yellow), Camel(color: .white)]
     
@@ -34,18 +35,20 @@ class Board: NSCopying {
         }
         guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return "" }
         
-        let postfix = modifierAt(location: camel.location + die.value) == 0 ? "\n" : " and hit desert tile at \(camel.location + die.value + 1)\n"
+        let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
+                       modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
+        let postfix = modifierAt(location: camel.location + die.value) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
         var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-        newLocation = newLocation > 16 ? 16 : newLocation
+        newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
         move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-        if camel.location > 15 { gameIsOver = true }
+        if camel.location >= Board.numberOfCells { gameIsOver = true }
         var winner = ""
         if dicePyramid.dice.count == 0 || gameIsOver {
             legCount += 1
             dicePyramid.reset()
             winner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
         }
-        return "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + winner
+        return "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + winner + (gameIsOver ? "\(currentWinner().color.rawValue) wins race" : "")
     }
     
     func doLeg() -> String {
@@ -53,20 +56,30 @@ class Board: NSCopying {
         while dicePyramid.dice.count > 0 {
             guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
             
-            let postfix = modifierAt(location: camel.location + die.value) == 0 ? "\n" : " and hit desert tile at \(camel.location + die.value + 1)\n"
+            let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
+                modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
+            let postfix = modifierAt(location: camel.location + die.value) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
             var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-            newLocation = newLocation > 16 ? 16 : newLocation
+            newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
             move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-            results +=  "\(camel.color.rawValue) camel moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
-            if camel.location > 15 { gameIsOver = true; break }
+            results +=  "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+            if camel.location >= Board.numberOfCells { gameIsOver = true; break }
         }
         results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
 
         legCount += 1
         dicePyramid.reset()
-        return results
+        return results + (gameIsOver ? "\(currentWinner().color.rawValue) wins race" : "")
     }
     
+    func doRace() -> String {
+        var results = ""
+        while !gameIsOver {
+            results = results + doLeg()
+        }
+        return results
+    }
+
     func move(camel: Camel, fromLocation: Int, toLocation: Int) {
         guard fromLocation != toLocation else { return }
         

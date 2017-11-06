@@ -1,6 +1,11 @@
 
 import UIKit
 
+enum SimulationType: String {
+    case leg = "leg"
+    case race = "race"
+}
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var infoLabel: UILabel!
@@ -12,98 +17,71 @@ class ViewController: UIViewController {
     @IBOutlet weak var raceButton: UIButton!
     @IBOutlet weak var simulationCountControl: UISegmentedControl!
     
-    let camelHeight: CGFloat = 40.0
-    let margin: CGFloat = 20.0
-    let board = Board()
-    let blueCamel = UIImageView(frame: CGRect.zero)
-    let greenCamel = UIImageView(frame: CGRect.zero)
-    let orangeCamel = UIImageView(frame: CGRect.zero)
-    let yellowCamel = UIImageView(frame: CGRect.zero)
-    let whiteCamel = UIImageView(frame: CGRect.zero)
+    fileprivate let camelHeight: CGFloat = 40.0
+    fileprivate let margin: CGFloat = 20.0
+    fileprivate let board = Board()
+    fileprivate let blueCamel = UIImageView.camelImageView(tintColor: UIColor.blue)
+    fileprivate let greenCamel = UIImageView.camelImageView(tintColor: UIColor.green)
+    fileprivate let orangeCamel = UIImageView.camelImageView(tintColor: UIColor.orange)
+    fileprivate let yellowCamel = UIImageView.camelImageView(tintColor: UIColor.darkYellow)
+    fileprivate let whiteCamel = UIImageView.camelImageView(tintColor: UIColor.darkWhite)
+    fileprivate let boardLabels:[UILabel] = (0..<Board.numberOfCells).map { UILabel.smallLabelWith(tag: $0) }
     
-    let boardLabels:[UILabel] = (0..<16).map { number in
-        let label = UILabel(frame: CGRect.zero);
-        label.tag = number
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 11)
-        return label
+    fileprivate var simulationCount: Int { return Int(simulationCountControl.titleForSelectedSegment ?? "1000") ?? 1000 }
+    fileprivate var camelViews:[UIImageView] { return [blueCamel, greenCamel, orangeCamel, yellowCamel, whiteCamel] } 
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        resultsTextView.layoutManager.allowsNonContiguousLayout = false
+        view.subviews.flatMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
+        camelViews.forEach({ self.view.addSubview($0) })
+        boardLabels.forEach({ self.view.addSubview($0) })
     }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        layoutBoardLabels()
+        applyBoardState()
+    }
+    
     @IBAction func simulationCountControlWasTapped(_ sender: Any) {
-        configureCamels()
+        applyBoardState()
     }
     
     @IBAction func resetWasTapped(_ sender: Any) {
         resultsTextView.text = ""
         board.reset()
-        configureCamels()
+        applyBoardState()
     }
     
     @IBAction func camelWasTapped(_ sender: Any) {
         resultsTextView.text = resultsTextView.text + board.doCamel()
-        if board.gameIsOver {
-            resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
-        }
-        configureCamels()
-   }
+        applyBoardState()
+    }
     
     @IBAction func legWasTapped(_ sender: Any) {
         resultsTextView.text = resultsTextView.text + board.doLeg()
-        if board.gameIsOver {
-            resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
-        }
-        configureCamels()
+        applyBoardState()
     }
     
     @IBAction func raceWasTapped(_ sender: Any) {
-        while !board.gameIsOver {
-            resultsTextView.text = resultsTextView.text + board.doLeg()
-        }
-        resultsTextView.text = resultsTextView.text + "\(board.currentWinner().color.rawValue) wins race"
-        configureCamels()
+        resultsTextView.text = resultsTextView.text + board.doRace()
+        applyBoardState()
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        resultsTextView.layoutManager.allowsNonContiguousLayout = false
-        view.subviews.flatMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
-        
-        blueCamel.tintColor = UIColor.blue
-        greenCamel.tintColor = UIColor.green
-        orangeCamel.tintColor = UIColor.orange
-        yellowCamel.tintColor = UIColor(red: 0.9, green: 0.9, blue: 0.0, alpha: 1.0)
-        whiteCamel.tintColor = UIColor(white: 0.9, alpha: 1.0)
-        [blueCamel, greenCamel, orangeCamel, yellowCamel, whiteCamel].forEach({
-            $0.image = UIImage(named: "camel")
-            $0.contentMode = .scaleAspectFill
-            $0.isUserInteractionEnabled = false;
-            self.view.addSubview($0)
-        })
-        boardLabels.forEach({
-            $0.layer.borderColor = UIColor.gray.cgColor
-            $0.layer.borderWidth = 1
-            $0.layer.cornerRadius = 4
-            $0.textAlignment = .center
-            self.view.addSubview($0)
-        })
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(viewWasTapped(gr:))))
-    }
-    
-    @objc
-    func viewWasTapped(gr: UITapGestureRecognizer) {
-        let location = gr.location(in: view)
+    @IBAction func viewWasTappped(_ sender: UITapGestureRecognizer) {
+        let location = sender.location(in: sender.view)
         if  location.x > margin &&
             location.x < view.frame.width - margin &&
             location.y > view.frame.height - margin - camelHeight &&
             location.y < view.frame.height - margin {
             
-            let width: CGFloat = (view.frame.width - margin - margin) / 16.0
+            let width: CGFloat = (view.frame.width - margin - margin) / CGFloat(Board.numberOfCells)
             let cellIndex = Int((location.x - 20.0) / width)
-            //            let modifier = location.y - (view.frame.height - margin - camelHeight)
             let boardCell = board.boardCells[cellIndex]
             let previousCell = (cellIndex - 1) < 0 ? nil : board.boardCells[cellIndex - 1].desertTile
             let nextCell = (cellIndex + 1) >= board.boardCells.count ? nil : board.boardCells[cellIndex + 1].desertTile
-            if previousCell == nil && nextCell == nil {
+            if previousCell == nil && nextCell == nil && board.camels.filter({ $0.location == cellIndex}).count == 0 {
                 if boardCell.desertTile == .plus {
                     boardCell.desertTile = .minus
                 } else if boardCell.desertTile == .minus {
@@ -111,41 +89,43 @@ class ViewController: UIViewController {
                 } else {
                     boardCell.desertTile = .plus
                 }
-                configureCamels()
+                applyBoardState()
             }
         }
+        
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
+    fileprivate func layoutBoardLabels() {
         boardLabels.forEach { label in
-            let width: CGFloat = (view.frame.width - margin - margin) / 16.0
+            let width: CGFloat = (view.frame.width - margin - margin) / CGFloat(Board.numberOfCells)
             let xPosition: CGFloat = (CGFloat(label.tag) * width) + margin
             let yPosition: CGFloat = self.view.frame.height - camelHeight - margin
             label.frame = CGRect(x: xPosition, y: yPosition, width: width, height: camelHeight)
         }
-        configureCamels()
     }
     
-    private func configureCamels() {
+    fileprivate func layoutCamels() {
         board.camels.forEach({camel in
-            let viewForCamel = self.viewFor(camel: camel)
-            let width: CGFloat = (view.frame.width - margin - margin) / 16.0
+            let width: CGFloat = (view.frame.width - margin - margin) / CGFloat(Board.numberOfCells)
             let xPosition: CGFloat = (CGFloat(camel.location) * width) + margin
             let camelsBelow: CGFloat = CGFloat(self.board.camelsBelow(camel: camel))
             let yPosition: CGFloat = self.view.frame.height - margin - camelHeight - (camelsBelow * (camelHeight * 0.75))
             UIView.animate(withDuration: 0.25, animations: {
-                viewForCamel.frame = CGRect(x: xPosition, y: yPosition, width: width, height: self.camelHeight)
+                self.viewFor(camel: camel).frame = CGRect(x: xPosition, y: yPosition, width: width, height: self.camelHeight)
             })
         })
+    }
+    
+    fileprivate func populateBoardLabels() {
         boardLabels.forEach { label in
             let boardCell = self.board.boardCells[label.tag]
             let labelText = "\(label.tag + 1)"
             if let desertTile = boardCell.desertTile {
-                if desertTile == .plus {
+                switch desertTile {
+                case .plus:
                     label.text = "(+\(desertTile.rawValue))" + "\n" + labelText + "\n"
                     label.backgroundColor = UIColor(red: 0, green: 1, blue: 0, alpha: 0.05)
-                } else {
+                case .minus:
                     label.text = "\n" + labelText + "\n" + "(\(desertTile.rawValue))"
                     label.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.05)
                 }
@@ -154,63 +134,49 @@ class ViewController: UIViewController {
                 label.backgroundColor = UIColor.clear
             }
         }
-        runLegSimulations()
-        runRaceSimulations()
+    }
+    
+    fileprivate func applyBoardState() {
         camelButton.isEnabled = !board.gameIsOver
         legButton.isEnabled = !board.gameIsOver
         raceButton.isEnabled = !board.gameIsOver
-        if board.dicePyramid.dice.count == 0 {
-            infoLabel3.text = "dice remaining: none"
-        } else {
-            infoLabel3.text = "dice remaining: " + board.dicePyramid.dice.flatMap({ $0.color.rawValue + " " })
-        }
+        layoutCamels()
+        populateBoardLabels()
+        infoLabel.text = runSimulations(simulationType: .leg)
+        infoLabel2.text = runSimulations(simulationType: .race)
+        infoLabel3.text = "dice remaining: " + (board.dicePyramid.dice.count == 0 ? "none" :
+            "" + board.dicePyramid.dice.flatMap({ $0.color.rawValue + " " }))
         resultsTextView.scrollRangeToVisible(NSMakeRange(resultsTextView.text.count, 0))
     }
     
-    private func simulationCount() -> Int {
-        let title = simulationCountControl.titleForSegment(at: simulationCountControl.selectedSegmentIndex) ?? "1000"
-        return Int(title) ?? 1000
-    }
-    
-    private func runLegSimulations() {
+    fileprivate func runSimulations(simulationType: SimulationType) -> String {
         let countedSet = NSCountedSet()
-        for _ in 1...simulationCount() {
+        for _ in 1...simulationCount {
             let boardCopy = board.copy() as! Board
-            _ = boardCopy.doLeg()
-            countedSet.add(boardCopy.currentWinner().color)
-        }
-        infoLabel.text = "\(simulationCount()) leg simulations:\n" +
-            "blue: \(formatCount(count: countedSet.count(for: Color.blue)))\n" +
-            "green: \(formatCount(count: countedSet.count(for: Color.green)))\n" +
-            "orange: \(formatCount(count: countedSet.count(for: Color.orange)))\n" +
-            "yellow: \(formatCount(count: countedSet.count(for: Color.yellow)))\n" +
-        "white: \(formatCount(count: countedSet.count(for: Color.white)))"
-    }
-    
-    private func formatCount(count: Int) -> String {
-        let fraction = Double(count) / Double(simulationCount())
-        let percentage = Int(fraction * 100.0)
-        return "\(count) -> \(percentage)%"
-    }
-    
-    private func runRaceSimulations() {
-        let countedSet = NSCountedSet()
-        for _ in 1...simulationCount() {
-            let boardCopy = board.copy() as! Board
-            while !boardCopy.gameIsOver {
+            switch simulationType {
+            case .race:
+                while !boardCopy.gameIsOver { _ = boardCopy.doLeg() }
+            case .leg:
                 _ = boardCopy.doLeg()
             }
             countedSet.add(boardCopy.currentWinner().color)
         }
-        infoLabel2.text = "\(simulationCount()) race simulations:\n" +
-            "blue: \(formatCount(count: countedSet.count(for: Color.blue)))\n" +
-            "green: \(formatCount(count: countedSet.count(for: Color.green)))\n" +
-            "orange: \(formatCount(count: countedSet.count(for: Color.orange)))\n" +
-            "yellow: \(formatCount(count: countedSet.count(for: Color.yellow)))\n" +
-        "white: \(formatCount(count: countedSet.count(for: Color.white)))"
+        return formatResults(set: countedSet, for: simulationType.rawValue)
     }
     
-    private func viewFor(camel: Camel) -> UIView {
+    fileprivate func formatResults(set: NSCountedSet, for value: String) -> String {
+        return "\(value) results for \(simulationCount) simulations:" +
+            [Color.blue, Color.green, Color.orange, Color.yellow, Color.white].flatMap({ color in
+                "\n\(color.rawValue): \(self.formatCount(count: set.count(for: color)))"
+            })
+    }
+    
+    fileprivate func formatCount(count: Int) -> String {
+        let percentage = Int(Double(count) / Double(simulationCount) * 100.0)
+        return "\(count) -> \(percentage)%"
+    }
+    
+    fileprivate func viewFor(camel: Camel) -> UIView {
         switch camel.color {
         case .blue:
             return blueCamel

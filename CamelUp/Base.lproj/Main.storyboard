@@ -112,7 +112,11 @@ line6</string>
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Puq-df-IYr" appends="YES" id="ZVt-bL-2Sr"/>
+                        </connections>
                     </view>
                     <connections>
                         <outlet property="camelButton" destination="KfV-3P-pBo" id="nAI-js-YIz"/>
@@ -126,6 +130,11 @@ line6</string>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Puq-df-IYr">
+                    <connections>
+                        <action selector="viewWasTappped:" destination="BYZ-38-t0r" id="6FK-C6-Q6h"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="117.39130434782609" y="101.59999999999999"/>
         </scene>
