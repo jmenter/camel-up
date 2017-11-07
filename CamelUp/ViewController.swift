@@ -3,8 +3,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var infoLabel: UILabel!
-    @IBOutlet weak var infoLabel2: UILabel!
+    @IBOutlet weak var legLabel: UILabel!
+    @IBOutlet weak var raceLabel: UILabel!
     @IBOutlet weak var resultsTextView: UITextView!
     @IBOutlet weak var camelButton: UIButton!
     @IBOutlet weak var legButton: UIButton!
@@ -138,8 +138,8 @@ class ViewController: UIViewController {
         raceButton.isEnabled = !board.gameIsOver
         layoutCamels()
         populateBoardLabels()
-        infoLabel.text = runSimulations(simulationType: .leg)
-        infoLabel2.text = runSimulations(simulationType: .race)
+        legLabel.text = runSimulations(simulationType: .leg)
+        raceLabel.text = runSimulations(simulationType: .race)
         for (index, camel) in board.camels.enumerated() {
             self.diceButtons[index].isSelected = board.dicePyramid.dice.filter({$0.color == camel.color }).count == 0
         }

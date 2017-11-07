@@ -63,7 +63,7 @@ line6</string>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="8gw-qy-kPK">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="8gw-qy-kPK">
                                 <rect key="frame" x="210" y="58" width="234" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <segments>
@@ -132,10 +132,10 @@ line6</string>
                     </view>
                     <connections>
                         <outlet property="camelButton" destination="KfV-3P-pBo" id="nAI-js-YIz"/>
-                        <outlet property="infoLabel" destination="xUJ-TG-B4F" id="nr5-ds-TKA"/>
-                        <outlet property="infoLabel2" destination="Grp-9g-CaD" id="3LJ-SS-7pI"/>
                         <outlet property="legButton" destination="efd-Oi-L7J" id="yLV-yu-0DT"/>
+                        <outlet property="legLabel" destination="xUJ-TG-B4F" id="nr5-ds-TKA"/>
                         <outlet property="raceButton" destination="jAJ-RK-jkX" id="EyY-57-01Q"/>
+                        <outlet property="raceLabel" destination="Grp-9g-CaD" id="3LJ-SS-7pI"/>
                         <outlet property="resultsTextView" destination="rio-Jf-ZZT" id="gwy-NX-jcA"/>
                         <outlet property="simulationCountControl" destination="8gw-qy-kPK" id="4lX-4m-9e5"/>
                         <outletCollection property="diceButtons" destination="5v5-jg-wH8" collectionClass="NSMutableArray" id="282-v8-a3y"/>
