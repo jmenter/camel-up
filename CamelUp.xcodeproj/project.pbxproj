@@ -21,6 +21,7 @@
 		63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A41FAE45AA000335BC /* BoardCell.swift */; };
 		63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */; };
 		63DCE6C61FB013EC009B70F3 /* SimulationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCE6C51FB013EC009B70F3 /* SimulationType.swift */; };
+		63FA22CE1FB154B50002F5DF /* DieButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63FA22CD1FB154B50002F5DF /* DieButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		63A333A41FAE45AA000335BC /* BoardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardCell.swift; sourceTree = "<group>"; };
 		63C4AC0E1FAFA76300FBD0E5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		63DCE6C51FB013EC009B70F3 /* SimulationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationType.swift; sourceTree = "<group>"; };
+		63FA22CD1FB154B50002F5DF /* DieButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DieButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 				638E221F1FAE085000A501B3 /* ViewController.swift */,
 				638E222F1FAE085B00A501B3 /* Board.swift */,
 				63DCE6C51FB013EC009B70F3 /* SimulationType.swift */,
+				63FA22CD1FB154B50002F5DF /* DieButton.swift */,
 				63DCE6C31FB00E37009B70F3 /* Board Parts */,
 				63DCE6C41FB00E51009B70F3 /* Etc */,
 				638E22211FAE085000A501B3 /* Main.storyboard */,
@@ -183,6 +186,7 @@
 				63A3339D1FAE4500000335BC /* Camel.swift in Sources */,
 				63A333A11FAE4538000335BC /* Die.swift in Sources */,
 				63A3339B1FAE44DF000335BC /* Color.swift in Sources */,
+				63FA22CE1FB154B50002F5DF /* DieButton.swift in Sources */,
 				63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */,
 				63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */,
 				638E221E1FAE085000A501B3 /* AppDelegate.swift in Sources */,

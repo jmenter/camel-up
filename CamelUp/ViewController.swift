@@ -5,7 +5,6 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var infoLabel: UILabel!
     @IBOutlet weak var infoLabel2: UILabel!
-    @IBOutlet weak var infoLabel3: UILabel!
     @IBOutlet weak var resultsTextView: UITextView!
     @IBOutlet weak var camelButton: UIButton!
     @IBOutlet weak var legButton: UIButton!
@@ -19,6 +18,8 @@ class ViewController: UIViewController {
     fileprivate let boardLabels: [UILabel] = (0..<Board.numberOfCells).map { UILabel.smallLabelWith(tag: $0) }
     fileprivate let camelImageViews:[UIImageView]
     fileprivate var simulationCount: Int { return Int(simulationCountControl.titleForSelectedSegment ?? "1000") ?? 1000 }
+    
+    @IBOutlet var diceButtons: [DieButton]!
     
     required init?(coder aDecoder: NSCoder) {
         camelImageViews = board.camels.map({ camel in
@@ -35,11 +36,34 @@ class ViewController: UIViewController {
         view.subviews.flatMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
         camelImageViews.forEach({ self.view.addSubview($0) })
         boardLabels.forEach({ self.view.addSubview($0) })
+        for (index, camel) in board.camels.enumerated() {
+            self.diceButtons[index].color = camel.color
+            self.diceButtons[index].tintColor = camel.color.color
+            self.diceButtons[index].makeButtonSane()
+            self.diceButtons[index].layer.borderColor = camel.color.color.cgColor
+            self.diceButtons[index].layer.borderWidth = 1
+            self.diceButtons[index].setBackgroundColor(.white, for: .selected)
+            self.diceButtons[index].setTitleColor(self.diceButtons[index].tintColor, for: .selected)
+            self.diceButtons[index].addTarget(self, action: #selector(dieWasTapped(_:)), for: .touchUpInside)
+        }
+        
     }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         layoutBoardLabels()
+        applyBoardState()
+    }
+    
+    @IBAction func dieWasTapped(_ sender: DieButton) {
+        if let die = board.dicePyramid.dice.filter({$0.color == sender.color}).first,
+            let index = board.dicePyramid.dice.index(of: die) {
+            board.dicePyramid.dice.remove(at: index)
+        } else {
+            if let color = sender.color {
+                board.dicePyramid.dice.append(Die(color: color))
+            }
+        }
         applyBoardState()
     }
     
@@ -68,7 +92,7 @@ class ViewController: UIViewController {
         applyBoardState()
     }
     
-    @IBAction func viewWasTappped(_ sender: UITapGestureRecognizer) {
+    @IBAction func viewWasTapped(_ sender: UITapGestureRecognizer) {
         let location = sender.location(in: sender.view)
         guard location.x > margin &&
             location.x < view.frame.width - margin &&
@@ -85,6 +109,29 @@ class ViewController: UIViewController {
         }
     }
     
+    var pannedCamel: Camel?
+    @IBAction func viewWasPanned(_ sender: UIPanGestureRecognizer) {
+        let location = sender.location(in: sender.view)
+        if sender.state == .began {
+            guard location.x > margin &&
+                location.x < view.frame.width - margin else { return }
+            let cellIndex = Int((location.x - 20.0) / cellWidth)
+            if let camel = board.camels.filter({ $0.location == cellIndex && $0.camelUpColor == nil }).first {
+                pannedCamel = camel
+            }
+        } else if sender.state == .changed {
+            pannedCamel?.imageView?.center = location
+        } else if sender.state == .ended {
+            if let pannedCamel = pannedCamel {
+                var cellIndex = Int((location.x - 20.0) / cellWidth)
+                cellIndex = cellIndex < 0 ? 0 : cellIndex > Board.numberOfCells - 1 ? Board.numberOfCells - 1 : cellIndex
+                board.move(camel: pannedCamel, fromLocation: pannedCamel.location, toLocation: cellIndex)
+                self.pannedCamel = nil
+                applyBoardState()
+            }
+        }
+    }
+
     fileprivate func applyBoardState() {
         camelButton.isEnabled = !board.gameIsOver
         legButton.isEnabled = !board.gameIsOver
@@ -93,7 +140,9 @@ class ViewController: UIViewController {
         populateBoardLabels()
         infoLabel.text = runSimulations(simulationType: .leg)
         infoLabel2.text = runSimulations(simulationType: .race)
-        infoLabel3.text = "dice remaining: " + board.dicePyramid.dice.flatMap({ $0.color.rawValue + " " })
+        for (index, camel) in board.camels.enumerated() {
+            self.diceButtons[index].isSelected = board.dicePyramid.dice.filter({$0.color == camel.color }).count == 0
+        }
         resultsTextView.scrollRangeToVisible(NSMakeRange(resultsTextView.text.count, 0))
     }
     

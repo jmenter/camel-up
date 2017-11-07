@@ -64,7 +64,7 @@ line6</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="2" translatesAutoresizingMaskIntoConstraints="NO" id="8gw-qy-kPK">
-                                <rect key="frame" x="128" y="58" width="316" height="29"/>
+                                <rect key="frame" x="210" y="58" width="234" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <segments>
                                     <segment title="100"/>
@@ -76,22 +76,8 @@ line6</string>
                                     <action selector="simulationCountControlWasTapped:" destination="BYZ-38-t0r" eventType="valueChanged" id="8FR-ek-ekx"/>
                                 </connections>
                             </segmentedControl>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="line 1" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Heg-hv-MOr">
-                                <rect key="frame" x="20" y="94" width="424" height="20"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Simulations:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xLE-Hx-taR">
-                                <rect key="frame" x="20" y="58" width="100" height="28"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rio-Jf-ZZT">
-                                <rect key="frame" x="20" y="123" width="424" height="182"/>
+                                <rect key="frame" x="20" y="96" width="424" height="209"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -110,31 +96,66 @@ line6</string>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="koT-sZ-5Xx" customClass="DieButton" customModule="CamelUp" customModuleProvider="target">
+                                <rect key="frame" x="134" y="58" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="🎲"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CjS-4w-6ae" customClass="DieButton" customModule="CamelUp" customModuleProvider="target">
+                                <rect key="frame" x="96" y="58" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="🎲"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nSH-Bv-TgP" customClass="DieButton" customModule="CamelUp" customModuleProvider="target">
+                                <rect key="frame" x="58" y="58" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="🎲"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5v5-jg-wH8" customClass="DieButton" customModule="CamelUp" customModuleProvider="target">
+                                <rect key="frame" x="20" y="58" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="🎲"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hdE-yg-7Qg" customClass="DieButton" customModule="CamelUp" customModuleProvider="target">
+                                <rect key="frame" x="172" y="58" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="🎲"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="Puq-df-IYr" appends="YES" id="ZVt-bL-2Sr"/>
+                            <outletCollection property="gestureRecognizers" destination="yAu-Bs-h19" appends="YES" id="euJ-i3-Ktr"/>
                         </connections>
                     </view>
                     <connections>
                         <outlet property="camelButton" destination="KfV-3P-pBo" id="nAI-js-YIz"/>
                         <outlet property="infoLabel" destination="xUJ-TG-B4F" id="nr5-ds-TKA"/>
                         <outlet property="infoLabel2" destination="Grp-9g-CaD" id="3LJ-SS-7pI"/>
-                        <outlet property="infoLabel3" destination="Heg-hv-MOr" id="VDg-9k-pKB"/>
                         <outlet property="legButton" destination="efd-Oi-L7J" id="yLV-yu-0DT"/>
                         <outlet property="raceButton" destination="jAJ-RK-jkX" id="EyY-57-01Q"/>
                         <outlet property="resultsTextView" destination="rio-Jf-ZZT" id="gwy-NX-jcA"/>
                         <outlet property="simulationCountControl" destination="8gw-qy-kPK" id="4lX-4m-9e5"/>
+                        <outletCollection property="diceButtons" destination="5v5-jg-wH8" collectionClass="NSMutableArray" id="282-v8-a3y"/>
+                        <outletCollection property="diceButtons" destination="nSH-Bv-TgP" collectionClass="NSMutableArray" id="U85-eU-6zX"/>
+                        <outletCollection property="diceButtons" destination="CjS-4w-6ae" collectionClass="NSMutableArray" id="qnw-Zl-SiX"/>
+                        <outletCollection property="diceButtons" destination="koT-sZ-5Xx" collectionClass="NSMutableArray" id="xnJ-uZ-S4F"/>
+                        <outletCollection property="diceButtons" destination="hdE-yg-7Qg" collectionClass="NSMutableArray" id="n9g-vp-rCW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="Puq-df-IYr">
                     <connections>
-                        <action selector="viewWasTappped:" destination="BYZ-38-t0r" id="6FK-C6-Q6h"/>
+                        <action selector="viewWasTapped:" destination="BYZ-38-t0r" id="6FK-C6-Q6h"/>
                     </connections>
                 </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="yAu-Bs-h19">
+                    <connections>
+                        <action selector="viewWasPanned:" destination="BYZ-38-t0r" id="uqm-tL-GPa"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="117.39130434782609" y="101.59999999999999"/>
         </scene>
