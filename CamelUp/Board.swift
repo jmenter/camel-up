@@ -2,9 +2,9 @@
 import Foundation
 
 class Board {
-
+    
     static let numberOfCells = 16
-    var boardCells:[BoardCell] = (0..<Board.numberOfCells).map { _ in BoardCell() }
+    var boardCells: [BoardCell] = (0..<Board.numberOfCells).map { _ in BoardCell() }
     var dicePyramid = DicePyramid()
     var camels = Color.allColors.map({ Camel(color: $0) })
     
@@ -28,12 +28,14 @@ class Board {
     }
     
     func doCamel() -> String {
-        if dicePyramid.dice.count == 0 { dicePyramid.reset() }
+        if dicePyramid.dice.count == 0 {
+            dicePyramid.reset()
+        }
         
         guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return "" }
         
         let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
-                       modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
+            modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
         let postfix = modifierAt(location: camel.location + die.value) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
         var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
         newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
@@ -42,6 +44,7 @@ class Board {
         var legWinner = ""
         if dicePyramid.dice.count == 0 || gameIsOver {
             dicePyramid.reset()
+            boardCells.forEach({ $0.desertTile = nil })
             legWinner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
         }
         return "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + legWinner + (gameIsOver ? "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race" : "")
@@ -62,6 +65,7 @@ class Board {
             if camel.location >= Board.numberOfCells { gameIsOver = true; break }
         }
         dicePyramid.reset()
+        boardCells.forEach({ $0.desertTile = nil })
         results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
         if gameIsOver {
             results += "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race"
@@ -76,8 +80,13 @@ class Board {
         }
         return results
     }
-
+    
     func move(camel: Camel, fromLocation: Int, toLocation: Int) {
+        if toLocation < boardCells.count &&
+            camels.filter({ $0.location == toLocation}).count == 0 &&
+            boardCells[toLocation].desertTile == nil {
+            boardCells[toLocation].camelHits += 1
+        }
         guard fromLocation != toLocation else { return }
         
         camels.filter({ $0.camelUpColor == camel.color }).forEach({ $0.camelUpColor = nil })
@@ -111,7 +120,7 @@ class Board {
         }
         return count
     }
-
+    
     func currentWinner() -> Camel {
         let furthestCamelLocation = camels.sorted(by: { $0.location > $1.location }).first?.location
         let furthestCamels = camels.filter({$0.location == furthestCamelLocation})
@@ -139,5 +148,5 @@ class Board {
         
         return newCopy
     }
-
+    
 }

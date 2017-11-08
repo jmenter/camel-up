@@ -3,6 +3,7 @@ import Foundation
 
 class BoardCell {
     
+    var camelHits: Int = 0
     var desertTile:DesertTile?
     
     func cycleDesertTile() {

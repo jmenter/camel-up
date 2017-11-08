@@ -14,9 +14,9 @@ enum Color : String {
     var color: UIColor {
         switch self {
         case .blue:
-            return UIColor.blue
+            return UIColor.darkBlue
         case .green:
-            return UIColor.green
+            return UIColor.darkGreen
         case .orange:
             return UIColor.orange
         case .yellow:

@@ -56,7 +56,9 @@ extension UIImageView {
 
 extension UIColor {
     class var darkYellow: UIColor { return UIColor(red: 0.9, green: 0.9, blue: 0.0, alpha: 1.0) }
-    class var darkWhite: UIColor { return UIColor(white: 0.9, alpha: 1.0) }
+    class var darkGreen: UIColor { return UIColor(red: 0.0, green: 0.8, blue: 0.0, alpha: 1.0) }
+    class var darkBlue: UIColor { return UIColor(red: 0.0, green: 0.0, blue: 0.8, alpha: 1.0) }
+    class var darkWhite: UIColor { return UIColor(white: 0.8, alpha: 1.0) }
 }
 
 extension UISegmentedControl {
