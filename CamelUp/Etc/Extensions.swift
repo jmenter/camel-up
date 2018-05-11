@@ -31,9 +31,9 @@ extension UIButton {
 
 extension UIImage {
     convenience init(color: UIColor) {
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: 1, height: 1), false, 0)
+        UIGraphicsBeginImageContextWithOptions(.one, false, 0)
         color.setFill()
-        UIRectFill(CGRect(x: 0, y: 0, width: 1, height: 1))
+        UIRectFill(.one)
         if let image = UIGraphicsGetImageFromCurrentImageContext(), let cgImage = image.cgImage {
             self.init(cgImage: cgImage)
         } else {
@@ -42,6 +42,14 @@ extension UIImage {
         UIGraphicsEndImageContext()
     }
     
+}
+
+extension CGSize {
+    public static var one: CGSize { get { return CGSize(width: 1, height: 1) } }
+}
+
+extension CGRect {
+    public static var one: CGRect { get { return CGRect(origin: .zero, size: .one) } }
 }
 
 extension UIImageView {
@@ -57,10 +65,10 @@ extension UIImageView {
 extension UIColor {
     class var darkYellow: UIColor { return UIColor(red: 0.9, green: 0.9, blue: 0.0, alpha: 1.0) }
     class var darkGreen: UIColor { return UIColor(red: 0.0, green: 0.8, blue: 0.0, alpha: 1.0) }
-    class var darkBlue: UIColor { return UIColor(red: 0.0, green: 0.0, blue: 0.8, alpha: 1.0) }
+    class var darkBlue: UIColor { return UIColor(red: 0.4, green: 0.4, blue: 1.0, alpha: 1.0) }
     class var darkWhite: UIColor { return UIColor(white: 0.8, alpha: 1.0) }
 }
 
 extension UISegmentedControl {
-    var titleForSelectedSegment: String? { return titleForSegment(at: selectedSegmentIndex) }
+    var selectedSegmentTitle: String? { return titleForSegment(at: selectedSegmentIndex) }
 }

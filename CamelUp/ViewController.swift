@@ -4,8 +4,6 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet var xvLabels: [UILabel]!
-    @IBOutlet weak var legLabel: UILabel!
-    @IBOutlet weak var raceLabel: UILabel!
     @IBOutlet weak var resultsTextView: UITextView!
     @IBOutlet weak var camelButton: UIButton!
     @IBOutlet weak var legButton: UIButton!
@@ -17,16 +15,25 @@ class ViewController: UIViewController {
     fileprivate let margin: CGFloat = 20.0
     fileprivate var cellWidth: CGFloat { return (view.frame.width - (margin * 2.0)) / CGFloat(Board.numberOfCells) }
     fileprivate let boardLabels: [UILabel] = (0..<Board.numberOfCells).map { UILabel.smallLabelWith(tag: $0) }
-    fileprivate let camelImageViews:[UIImageView]
-    fileprivate var simulationCount: Int { return Int(simulationCountControl.titleForSelectedSegment ?? "1000") ?? 1000 }
+    fileprivate let camelImageViews: [UIImageView]
+    fileprivate let camelLabels: [UILabel]
+    fileprivate var simulationCount: Int { return Int(simulationCountControl.selectedSegmentTitle ?? "1000") ?? 1000 }
     
     @IBOutlet var diceButtons: [DieButton]!
     
     required init?(coder aDecoder: NSCoder) {
         camelImageViews = board.camels.map({ camel in
-            let camelImageView = UIImageView.camelImageView(tintColor: camel.color.color)
+            let camelImageView = UIImageView.camelImageView(tintColor: camel.camelColor.color)
             camel.imageView = camelImageView
             return camelImageView
+        })
+        camelLabels = board.camels.map({ camel in
+            let camelLabel = UILabel()
+            camelLabel.textAlignment = .center
+            camelLabel.font = UIFont.systemFont(ofSize: 8)
+            camelLabel.numberOfLines = 0
+            camel.label = camelLabel
+            return camelLabel
         })
         super.init(coder: aDecoder)
     }
@@ -34,22 +41,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         resultsTextView.layoutManager.allowsNonContiguousLayout = false
-        view.subviews.flatMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
+        view.subviews.compactMap({ $0 as? UIButton}).forEach({ $0.makeButtonSane() })
         camelImageViews.forEach({ self.view.addSubview($0) })
+        camelLabels.forEach({ self.view.addSubview($0) })
         boardLabels.forEach({ $0.clipsToBounds = true; self.view.addSubview($0) })
         for (index, camel) in board.camels.enumerated() {
-            self.xvLabels[index].textColor = camel.color.color
-            
-            self.diceButtons[index].color = camel.color
-            self.diceButtons[index].tintColor = camel.color.color
-            self.diceButtons[index].makeButtonSane()
-            self.diceButtons[index].layer.borderColor = camel.color.color.cgColor
-            self.diceButtons[index].layer.borderWidth = 1
-            self.diceButtons[index].setBackgroundColor(.white, for: .selected)
-            self.diceButtons[index].setTitleColor(self.diceButtons[index].tintColor, for: .selected)
+            self.xvLabels[index].textColor = camel.camelColor.color
+            self.diceButtons[index].configureFor(camelColor: camel.camelColor)
             self.diceButtons[index].addTarget(self, action: #selector(dieWasTapped(_:)), for: .touchUpInside)
         }
-        
     }
     
     override func viewWillLayoutSubviews() {
@@ -59,14 +59,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func dieWasTapped(_ sender: DieButton) {
-        if let die = board.dicePyramid.dice.filter({$0.color == sender.color}).first,
-            let index = board.dicePyramid.dice.index(of: die) {
-            board.dicePyramid.dice.remove(at: index)
-        } else {
-            if let color = sender.color {
-                board.dicePyramid.dice.append(Die(color: color))
-            }
-        }
+        board.dicePyramid.toggleDie(color: sender.color)
         applyBoardState()
     }
     
@@ -96,34 +89,28 @@ class ViewController: UIViewController {
     }
     
     @IBAction func viewWasTapped(_ sender: UITapGestureRecognizer) {
-        let location = sender.location(in: sender.view)
-        guard location.x > margin &&
-            location.x < view.frame.width - margin &&
-            location.y > view.frame.height - margin - camelHeight &&
-            location.y < view.frame.height - margin else { return }
+        guard locationIsInTileZone(sender.location(in: sender.view)) else { return }
         
-        let cellIndex = Int((location.x - 20.0) / cellWidth)
-        let boardCell = board.boardCells[cellIndex]
-        let previousCell = (cellIndex - 1) < 0 ? nil : board.boardCells[cellIndex - 1].desertTile
-        let nextCell = (cellIndex + 1) >= board.boardCells.count ? nil : board.boardCells[cellIndex + 1].desertTile
-        if previousCell == nil && nextCell == nil && board.camels.filter({ $0.location == cellIndex}).count == 0 {
-            boardCell.cycleDesertTile()
-            applyBoardState()
-        }
+        let cellIndex = Int((sender.location(in: sender.view).x - margin) / cellWidth)
+        board.cycleDesertTileAt(index: cellIndex)
+        applyBoardState()
+    }
+    
+    fileprivate func locationIsInTileZone(_ location: CGPoint) -> Bool {
+        return location.x > margin && location.x < view.frame.width - margin &&
+            location.y > view.frame.height - margin - camelHeight && location.y < view.frame.height - margin
     }
     
     var pannedCamel: Camel?
     @IBAction func viewWasPanned(_ sender: UIPanGestureRecognizer) {
         let location = sender.location(in: sender.view)
         if sender.state == .began {
-            guard location.x > margin &&
-                location.x < view.frame.width - margin else { return }
+            guard location.x > margin && location.x < view.frame.width - margin else { return }
             let cellIndex = Int((location.x - 20.0) / cellWidth)
-            if let camel = board.camels.filter({ $0.location == cellIndex && $0.camelUpColor == nil }).first {
-                pannedCamel = camel
-            }
+            pannedCamel = board.camels.topCamelAt(index: cellIndex)
         } else if sender.state == .changed {
             pannedCamel?.imageView?.center = location
+            pannedCamel?.label?.center = location
         } else if sender.state == .ended {
             if let pannedCamel = pannedCamel {
                 var cellIndex = Int((location.x - 20.0) / cellWidth)
@@ -134,29 +121,36 @@ class ViewController: UIViewController {
             }
         }
     }
-
+    
     fileprivate func applyBoardState() {
         camelButton.isEnabled = !board.gameIsOver
         legButton.isEnabled = !board.gameIsOver
         raceButton.isEnabled = !board.gameIsOver
         layoutCamels()
-        raceLabel.text = runSimulations(simulationType: .race)
-        legLabel.text = runSimulations(simulationType: .leg)
+        _ = runSimulations(simulationType: .leg)
+        _ = runSimulations(simulationType: .race)
         populateBoardLabels()
-        for (index, camel) in board.camels.enumerated() {
-            self.diceButtons[index].isSelected = board.dicePyramid.dice.filter({$0.color == camel.color }).count != 0
-        }
+        configureDiceButtons()
+        resultsTextView.font = UIFont.systemFont(ofSize: 10)
         resultsTextView.scrollRangeToVisible(NSMakeRange(resultsTextView.text.count, 0))
+    }
+    
+    fileprivate func configureDiceButtons() {
+        for (index, camel) in board.camels.enumerated() {
+            self.diceButtons[index].setTitle(board.dicePyramid.stringValueFor(color: camel.camelColor), for: .normal)
+            self.diceButtons[index].isSelected = board.dicePyramid.contains(color: camel.camelColor)
+        }
     }
     
     fileprivate func layoutCamels() {
         board.camels.forEach({camel in
-            let camelOffset = CGFloat(self.board.camelsBelow(camel: camel)) * camelHeight * 0.70
+            let camelOffset = CGFloat(self.board.camels.countOfCamelsBelow(camel:camel)) * camelHeight * 0.70
             UIView.animate(withDuration: 0.25, animations: {
                 camel.imageView?.frame = CGRect(x: (CGFloat(camel.location) * self.cellWidth) + self.margin,
-                                                y: self.view.frame.height - self.margin - self.camelHeight - self.camelHeight - camelOffset,
+                                                y: self.view.frame.height - self.margin - self.camelHeight * 2.0 - camelOffset,
                                                 width: self.cellWidth,
                                                 height: self.camelHeight)
+                camel.label?.frame = camel.imageView?.frame ?? .zero
             })
         })
     }
@@ -190,10 +184,10 @@ class ViewController: UIViewController {
         biggest = (biggest < 1 ? 1 : biggest)
         boardLabels.forEach({label in
             let alpha = CGFloat(board.boardCells[label.tag].camelHits) / biggest
-            let percentage = CGFloat(board.boardCells[label.tag].camelHits) / CGFloat(self.simulationCount)
+            //            let percentage = CGFloat(board.boardCells[label.tag].camelHits) / CGFloat(self.simulationCount)
             label.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: alpha)
             if alpha > 0.01 {
-                label.text = "\n\(label.tag + 1)\n\(Int(percentage * 100.0))%"
+                label.text = "\n\(label.tag + 1)\n\(String(format: "%.2f", alpha))"
             } else {
                 label.text = "\(label.tag + 1)"
             }
@@ -206,12 +200,12 @@ class ViewController: UIViewController {
             case .minus:
                 label.text = "\n\(label.tag + 1)\n\(desertTile.description)"
             }
-
         })
     }
     
     fileprivate func runSimulations(simulationType: SimulationType) -> String {
-        let countedSet = NSCountedSet()
+        let winnderSet = NSCountedSet()
+        let runnerUpSet = NSCountedSet()
         let boardCells = board.boardCells.map({ $0.copy() })
         board.boardCells.forEach({ $0.camelHits = 0 })
         for _ in 1...simulationCount {
@@ -225,27 +219,41 @@ class ViewController: UIViewController {
                     boardCells[index].camelHits += cell.camelHits
                 }
             }
-            countedSet.add(boardCopy.currentWinner().color)
+            winnderSet.add(boardCopy.currentWinner().camelColor)
+            runnerUpSet.add((boardCopy.currentRunnerUp().camelColor))
         }
         board.boardCells = boardCells
-        return formatResults(set: countedSet, for: simulationType)
+        return formatResults(winnerSet: winnderSet, runnerUpSet: runnerUpSet, for: simulationType)
     }
     
-    fileprivate func formatResults(set: NSCountedSet, for simulationType: SimulationType) -> String {
+    fileprivate func formatResults(winnerSet: NSCountedSet, runnerUpSet: NSCountedSet, for simulationType: SimulationType) -> String {
         if simulationType == .leg {
-            for (index, color) in Color.allColors.enumerated() {
-                let winPercentage = Double(set.count(for: color)) / Double(simulationCount)
-                self.xvLabels[index].text = "\(xvFormatted(5.0, winPercentage))  \(xvFormatted(3.0, winPercentage))  \(xvFormatted(2.0, winPercentage))"
+            for (index, color) in CamelColor.allColors.enumerated() {
+                let winPercentage = Double(winnerSet.count(for: color)) / Double(simulationCount)
+                if let camel = board.camels.camelOf(color: color), let label = camel.label {
+                    label.text = "\(Int(winPercentage * 100.0))%L"
+                }
+                let runnerUpPercentage = Double(runnerUpSet.count(for: color)) / Double(simulationCount)
+                self.xvLabels[index].text = "\(xvFormatted(5.0, winPercentage, runnerUpPercentage))  \(xvFormatted(3.0, winPercentage, runnerUpPercentage))  \(xvFormatted(2.0, winPercentage, runnerUpPercentage))"
             }
+        } else {
+            CamelColor.allColors.forEach({color in
+                if let camel = board.camels.camelOf(color: color), let label = camel.label {
+                    let winPercentage = Double(winnerSet.count(for: color)) / Double(simulationCount)
+                    let currentText = label.text ?? ""
+                    label.text = currentText + "\n\(Int(winPercentage * 100.0))%R"
+                }
+            })
         }
         return "results of \(simulationCount) \(simulationType.rawValue)s:" +
-            Color.allColors.flatMap({ color in "\n\(color.rawValue): \(self.formatCount(count: set.count(for: color)))" })
+            CamelColor.allColors.flatMap({ color in "\n\(color.rawValue): \(self.formatCount(count: winnerSet.count(for: color)))" })
     }
     
-    fileprivate func xvFormatted(_ baseValue: Double, _ winPercentage: Double) -> String {
-        let actualXv = (winPercentage * baseValue) - (1.0 - winPercentage)
+    fileprivate func xvFormatted(_ baseValue: Double, _ winPercentage: Double, _ runnerUpPercentage: Double) -> String {
+        let losePercentage = 1.0 - winPercentage - runnerUpPercentage;
+        let actualXv = (winPercentage * baseValue) + (runnerUpPercentage * 1.0) - (losePercentage * 1.0)
         let prefix = actualXv > 0.0 ? "+" : ""
-        return "\(Int(baseValue)):\(prefix)\(String(format:"%0.2f", actualXv))"
+        return "\(Int(baseValue)):\(prefix)£\(String(format:"%0.2f", actualXv))"
     }
     
     fileprivate func formatCount(count: Int) -> String {

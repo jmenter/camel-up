@@ -6,7 +6,7 @@ class Board {
     static let numberOfCells = 16
     var boardCells: [BoardCell] = (0..<Board.numberOfCells).map { _ in BoardCell() }
     var dicePyramid = DicePyramid()
-    var camels = Color.allColors.map({ Camel(color: $0) })
+    var camels = CamelColor.allColors.map({ Camel(camelColor: $0) })
     
     var gameIsOver = false
     
@@ -16,59 +16,62 @@ class Board {
     
     func reset() {
         gameIsOver = false
-        boardCells.forEach({$0.desertTile = nil})
-        camels.forEach({$0.location = -1; $0.camelUpColor = nil})
+        boardCells.reset()
+        camels.reset()
         dicePyramid.reset()
-        while dicePyramid.dice.count > 0 {
-            guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
-            
-            move(camel: camel, fromLocation: camel.location, toLocation: die.value - 1)
-        }
+        initializeCamelLocations()
         dicePyramid.reset()
     }
     
-    func doCamel() -> String {
-        if dicePyramid.dice.count == 0 {
-            dicePyramid.reset()
+    fileprivate func initializeCamelLocations() {
+        while dicePyramid.dice.count > 0 {
+            guard let die = dicePyramid.roll(), let camel = camels.camelOf(color: die.color) else { break }
+            
+            move(camel: camel, fromLocation: camel.location, toLocation: die.value - 1)
         }
+    }
+    
+    func doCamel() -> String {
+        if dicePyramid.dice.count == 0 { dicePyramid.reset() }
         
-        guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { return "" }
+        guard let die = dicePyramid.roll(), let camel = camels.camelOf(color: die.color) else { return "" }
         
-        let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
-            modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
-        let postfix = modifierAt(location: camel.location + die.value) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
-        var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-        newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
-        move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
+        let newLocation = camel.location + die.value
+        let modifier = boardCells.desertTileModifierStringAt(location: newLocation)
+        let postfix = boardCells.desertTileModifierAt(location: newLocation) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
+        var modifiedNewLocation = newLocation + boardCells.desertTileModifierAt(location: newLocation)
+        modifiedNewLocation = modifiedNewLocation > Board.numberOfCells ? Board.numberOfCells : modifiedNewLocation
+        move(camel: camel, fromLocation: camel.location, toLocation: modifiedNewLocation)
         if camel.location >= Board.numberOfCells { gameIsOver = true }
         var legWinner = ""
         if dicePyramid.dice.count == 0 || gameIsOver {
             dicePyramid.reset()
-            boardCells.forEach({ $0.desertTile = nil })
-            legWinner = "\n\(currentWinner().color.rawValue) wins leg\n\n"
-        }
-        return "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + legWinner + (gameIsOver ? "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race" : "")
+            boardCells.reset()
+            legWinner = "\n\(currentWinner().camelColor.rawValue) wins leg\n\(currentRunnerUp().camelColor.rawValue) gets 2nd in leg\n\n"
+       }
+        return "\(camel.camelColor.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix + legWinner + (gameIsOver ? "\(currentWinner().camelColor.rawValue) wins race\n\(currentLoser().camelColor.rawValue) loses race" : "")
     }
     
     func doLeg() -> String {
         var results = ""
         while dicePyramid.dice.count > 0 {
-            guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.color == die.color }).first else { break }
+            guard let die = dicePyramid.roll(), let camel = camels.filter({ $0.camelColor == die.color }).first else { break }
             
-            let modifier = modifierAt(location: camel.location + die.value) == -1 ? "-1" :
-                modifierAt(location: camel.location + die.value) == 1 ? "+1" : ""
-            let postfix = modifierAt(location: camel.location + die.value) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
-            var newLocation = camel.location + die.value + modifierAt(location: camel.location + die.value)
-            newLocation = newLocation > Board.numberOfCells ? Board.numberOfCells : newLocation
-            move(camel: camel, fromLocation: camel.location, toLocation: newLocation)
-            results += "\(camel.color.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
+            let newLocation = camel.location + die.value
+            let modifier = boardCells.desertTileModifierAt(location: newLocation) == -1 ? "-1" :
+                boardCells.desertTileModifierAt(location: newLocation) == 1 ? "+1" : ""
+            let postfix = boardCells.desertTileModifierAt(location: newLocation) == 0 ? ". " : " and hit " + modifier + " desert tile at \(camel.location + die.value + 1). "
+            var modifiedNewLocation = camel.location + die.value + boardCells.desertTileModifierAt(location: newLocation)
+            modifiedNewLocation = modifiedNewLocation > Board.numberOfCells ? Board.numberOfCells : modifiedNewLocation
+            move(camel: camel, fromLocation: camel.location, toLocation: modifiedNewLocation)
+            results += "\(camel.camelColor.rawValue) moved \(die.value) space" + (die.value == 1 ? "" : "s") + postfix
             if camel.location >= Board.numberOfCells { gameIsOver = true; break }
         }
         dicePyramid.reset()
-        boardCells.forEach({ $0.desertTile = nil })
-        results += "\n\(currentWinner().color.rawValue) wins leg\n\n"
+        boardCells.reset()
+        results += "\n\(currentWinner().camelColor.rawValue) wins leg\n\(currentRunnerUp().camelColor.rawValue) gets 2nd in leg\n\n"
         if gameIsOver {
-            results += "\(currentWinner().color.rawValue) wins race\n\(currentLoser().color.rawValue) loses race"
+            results += "\(currentWinner().camelColor.rawValue) wins race\n\(currentLoser().camelColor.rawValue) loses race"
         }
         return results
     }
@@ -89,36 +92,18 @@ class Board {
         }
         guard fromLocation != toLocation else { return }
         
-        camels.filter({ $0.camelUpColor == camel.color }).forEach({ $0.camelUpColor = nil })
+        camels.disattachFrom(camel: camel)
         
         var camelStack = [camel]
         var testCamel:Camel? = camel
         
         while testCamel?.camelUpColor != nil {
-            testCamel = camels.filter({ $0.color == testCamel?.camelUpColor }).first
+            testCamel = camels.camelOf(color: testCamel!.camelUpColor!)
             camelStack.append(testCamel!)
         }
         
-        if let topDestinationCamel = camels.filter({$0.location == toLocation && $0.camelUpColor == nil}).first {
-            topDestinationCamel.camelUpColor = camel.color
-        }
-        
+        camels.topCamelAt(index: toLocation)?.camelUpColor = camel.camelColor
         camelStack.forEach({$0.location = toLocation})
-    }
-    
-    func modifierAt(location: Int) -> Int {
-        return location >= boardCells.count ? 0 : boardCells[location].desertTile?.rawValue ?? 0
-    }
-    
-    func camelsBelow(camel: Camel) -> Int {
-        var count = 0
-        var testCamel: Camel? = camel
-        
-        while camels.filter({$0.camelUpColor == testCamel?.color}).count > 0 {
-            count += 1
-            testCamel = self.camels.filter({$0.camelUpColor == testCamel?.color}).first
-        }
-        return count
     }
     
     func currentWinner() -> Camel {
@@ -127,17 +112,43 @@ class Board {
         return furthestCamels.filter({$0.camelUpColor == nil}).first!
     }
     
+    func currentRunnerUp() -> Camel {
+        let currentWinnerColor = currentWinner().camelColor
+        let nonFirstCamels = camels.filter({$0.camelColor != currentWinnerColor})
+        let furthestCamelLocation = nonFirstCamels.sorted(by: { $0.location > $1.location }).first?.location
+        let furthestCamels = nonFirstCamels.filter({$0.location == furthestCamelLocation})
+        
+        // if there's a furthest camel with no camel up (i.e., current winner is out by itself)
+        if let furthestCamel = furthestCamels.filter({$0.camelUpColor == nil}).first {
+            return furthestCamel
+        }
+        // otherwise there's a furthest camel with the current winner on top
+        return furthestCamels.filter({$0.camelUpColor == currentWinner().camelColor}).first!
+    }
+    
     func currentLoser() -> Camel {
         let nearestCamelLocation = camels.sorted(by: { $0.location < $1.location }).first?.location
         let nearestCamels = camels.filter({$0.location == nearestCamelLocation})
         var testCamel: Camel? = nearestCamels.filter({$0.camelUpColor == nil}).first!
         
-        while camels.filter({$0.camelUpColor == testCamel?.color}).count > 0 {
-            testCamel = self.camels.filter({$0.camelUpColor == testCamel?.color}).first
+        while camels.filter({$0.camelUpColor == testCamel?.camelColor}).count > 0 {
+            testCamel = self.camels.filter({$0.camelUpColor == testCamel?.camelColor}).first
         }
         return testCamel!
     }
     
+    func cycleDesertTileAt(index: Int) {
+        guard index < boardCells.count && index >= 0 else { return }
+        
+        let boardCell = boardCells[index]
+        let previousCell = (index - 1) < 0 ? nil : boardCells[index - 1].desertTile
+        let nextCell = (index + 1) >= boardCells.count ? nil : boardCells[index + 1].desertTile
+        if previousCell == nil && nextCell == nil && camels.filter({ $0.location == index}).count == 0 {
+            boardCell.cycleDesertTile()
+        }
+    }
+        
+
     func copy() -> Board {
         let newCopy = Board()
         

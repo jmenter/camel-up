@@ -1,7 +1,7 @@
 
 import UIKit
 
-enum Color : String {
+enum CamelColor : String {
     
     case blue = "blue"
     case green = "green"
@@ -9,7 +9,7 @@ enum Color : String {
     case yellow = "yellow"
     case white = "white"
     
-    static let allColors:[Color] = [.blue, .green, .orange, .yellow, .white]
+    static let allColors:[CamelColor] = [.blue, .green, .orange, .yellow, .white]
     
     var color: UIColor {
         switch self {

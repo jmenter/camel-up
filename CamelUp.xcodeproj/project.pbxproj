@@ -13,7 +13,7 @@
 		638E22251FAE085000A501B3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 638E22241FAE085000A501B3 /* Assets.xcassets */; };
 		638E22281FAE085000A501B3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 638E22261FAE085000A501B3 /* LaunchScreen.storyboard */; };
 		638E22301FAE085C00A501B3 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638E222F1FAE085B00A501B3 /* Board.swift */; };
-		63A3339B1FAE44DF000335BC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3339A1FAE44DF000335BC /* Color.swift */; };
+		63A3339B1FAE44DF000335BC /* CamelColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3339A1FAE44DF000335BC /* CamelColor.swift */; };
 		63A3339D1FAE4500000335BC /* Camel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3339C1FAE4500000335BC /* Camel.swift */; };
 		63A3339F1FAE4521000335BC /* DesertTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3339E1FAE4521000335BC /* DesertTile.swift */; };
 		63A333A11FAE4538000335BC /* Die.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A333A01FAE4538000335BC /* Die.swift */; };
@@ -33,7 +33,7 @@
 		638E22271FAE085000A501B3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		638E22291FAE085000A501B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		638E222F1FAE085B00A501B3 /* Board.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
-		63A3339A1FAE44DF000335BC /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		63A3339A1FAE44DF000335BC /* CamelColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CamelColor.swift; sourceTree = "<group>"; };
 		63A3339C1FAE4500000335BC /* Camel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camel.swift; sourceTree = "<group>"; };
 		63A3339E1FAE4521000335BC /* DesertTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesertTile.swift; sourceTree = "<group>"; };
 		63A333A01FAE4538000335BC /* Die.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Die.swift; sourceTree = "<group>"; };
@@ -95,7 +95,7 @@
 				63A333A01FAE4538000335BC /* Die.swift */,
 				63A333A21FAE4551000335BC /* DicePyramid.swift */,
 				63A333A41FAE45AA000335BC /* BoardCell.swift */,
-				63A3339A1FAE44DF000335BC /* Color.swift */,
+				63A3339A1FAE44DF000335BC /* CamelColor.swift */,
 				63A3339E1FAE4521000335BC /* DesertTile.swift */,
 			);
 			path = "Board Parts";
@@ -137,7 +137,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Jeff Menter";
 				TargetAttributes = {
 					638E22191FAE085000A501B3 = {
@@ -185,7 +185,7 @@
 				638E22201FAE085000A501B3 /* ViewController.swift in Sources */,
 				63A3339D1FAE4500000335BC /* Camel.swift in Sources */,
 				63A333A11FAE4538000335BC /* Die.swift in Sources */,
-				63A3339B1FAE44DF000335BC /* Color.swift in Sources */,
+				63A3339B1FAE44DF000335BC /* CamelColor.swift in Sources */,
 				63FA22CE1FB154B50002F5DF /* DieButton.swift in Sources */,
 				63A333A51FAE45AA000335BC /* BoardCell.swift in Sources */,
 				63C4AC0F1FAFA76300FBD0E5 /* Extensions.swift in Sources */,
@@ -233,6 +233,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -240,6 +241,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -290,6 +292,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -297,6 +300,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
